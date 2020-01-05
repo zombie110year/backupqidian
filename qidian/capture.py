@@ -47,6 +47,7 @@ def get_bookindex(session: r.Session, id: int) -> dict:
             # 成功
             data = obj["data"]
             logger.debug(f"get book {id}")
+            data["bId"] = id
             return data
 
 
@@ -55,12 +56,13 @@ def find_chapter_links(data: dict) -> Tuple[List[str], List[str]]:
 
     :returns: (免费章节链接, VIP章节链接)
     """
+    # note: data 是被修改过的，添加了 bId（书籍 Id）值用于构造 VIP 章节的 url
     volumes = data["vs"]
     freev = list(filter(lambda v: v["vS"] == 0, volumes))
     vipv = list(filter(lambda v: v["vS"] == 1, volumes))
     freec = [c['cU'] for v in freev for c in v['cs']]
-    vipc = [c['cU'] for v in vipv for c in v['cs']]
-    vipc = []
+    vipcid = (c['id'] for v in vipv for c in v['cs'])
+    vipc = [f"{data['bId']}/{i}" for i in vipcid]
     return (freec, vipc)
 
 
@@ -77,6 +79,35 @@ def get_freechapter(session: r.Session, subpath: str) -> BeautifulSoup:
 
 def parse_freechapter(html: BeautifulSoup) -> Tuple[str, Iterable[str]]:
     """解析免费章节内容
+
+    return (标题: str, 内容: str)
+    """
+    el_title = html.select_one(
+        ".text-wrap[id|=chapter] > div.main-text-wrap > div.text-head > h3.j_chapterName > span.content-wrap"
+    )
+    el_content = html.select_one(
+        ".text-wrap[id|=chapter] > div.main-text-wrap > div.read-content"
+    )
+    # span.content-wrap 是 js 添加的（猜测是段评功能的副作用）
+    el_paragraphes = el_content.select("p")
+    title = el_title.text
+    pars = [p.text.lstrip(PARINDENT_STR) for p in el_paragraphes]
+    return title, pars
+
+
+def get_vipchapter(session: r.Session, subpath: str) -> BeautifulSoup:
+    """获取 VIP 章节的内容
+    """
+    url = f"https://vipreader.qidian.com/chapter/{subpath}"
+    resp = session.get(url)
+    if resp.status_code in (200, 304):
+        text = resp.text
+    logger.debug(f"get chapter {url}")
+    return BeautifulSoup(text, "lxml")
+
+
+def parse_vipchapter(html: BeautifulSoup) -> Tuple[str, Iterable[str]]:
+    """解析 VIP 章节内容
 
     return (标题: str, 内容: str)
     """

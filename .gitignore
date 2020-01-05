@@ -2,6 +2,7 @@
 # Edit at https://www.gitignore.io/?templates=python
 cookies.*
 .vscode/
+backupqidian.log
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/

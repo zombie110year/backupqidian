@@ -76,3 +76,12 @@ class Chapter(Model):
 
     def __repr__(self):
         return f"Chapter(id={self.id}, title={self.title}, date={self.captrue_date})"
+
+
+def init_model():
+    from .settings import DefaultSettings
+    if DefaultSettings.INDEX_DATABASE["dbtype"] == "sqlite3":
+        engine = create_engine(f"sqlite:///{DefaultSettings.INDEX_DATABASE['dbpath']}")
+        Model.metadata.create_all(engine)
+    else:
+        raise NotImplementedError

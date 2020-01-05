@@ -11,6 +11,7 @@ from sqlalchemy.types import Integer
 from sqlalchemy.types import String
 from sqlalchemy.types import Text
 from sqlalchemy.types import DateTime
+from sqlalchemy import create_engine
 
 Model = declarative_base()
 
@@ -40,6 +41,8 @@ class Book(Model):
     max_chapters = Column(Integer())
     # 本书总共有多少章
 
+    def __repr__(self):
+        return f"""Book(id={self.id}, title={self.title})"""
 
 class Volume(Model):
     __tablename__ = "volume"
@@ -50,6 +53,8 @@ class Volume(Model):
     title = Column(String(TITLE_MAXLENGTH))
     # 卷名
 
+    def __repr__(self):
+        return f"Volume(id={self.id}, title={self.title})"
 
 class Chapter(Model):
     __tablename__ = "chapter"
@@ -68,3 +73,6 @@ class Chapter(Model):
     # 标题
     bolb_name = Column(String(HASH_STRING_LENGTH))
     # 存储实际内容的文件名
+
+    def __repr__(self):
+        return f"Chapter(id={self.id}, title={self.title}, date={self.captrue_date})"

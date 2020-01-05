@@ -92,6 +92,7 @@ def parse_freechapter(html: BeautifulSoup) -> Tuple[str, Iterable[str]]:
     el_paragraphes = el_content.select("p")
     title = el_title.text
     pars = [p.text.lstrip(PARINDENT_STR) for p in el_paragraphes]
+    logger.info(f"get {title}")
     return title, pars
 
 
@@ -121,4 +122,5 @@ def parse_vipchapter(html: BeautifulSoup) -> Tuple[str, Iterable[str]]:
     el_paragraphes = el_content.select("p")
     title = el_title.text
     pars = [p.text.lstrip(PARINDENT_STR) for p in el_paragraphes]
+    logger.info(f"get {title}")
     return title, pars

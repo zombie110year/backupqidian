@@ -3,6 +3,7 @@
 cookies.*
 .vscode/
 backupqidian.log
+tmp/
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/

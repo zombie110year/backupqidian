@@ -42,6 +42,7 @@ def get_bookindex(session: r.Session, id: int) -> dict:
         "bookId": id,
     })
     if resp.status_code in (200, 304):
+        resp.encoding = "utf-8"
         obj = resp.json()
         if obj["code"] == 0 and obj["msg"] == "suc":
             # 成功
@@ -64,6 +65,17 @@ def find_chapter_links(data: dict) -> Tuple[List[str], List[str]]:
     vipcid = (c['id'] for v in vipv for c in v['cs'])
     vipc = [f"{data['bId']}/{i}" for i in vipcid]
     return (freec, vipc)
+
+
+def get_chapter_titles(data: dict) -> Tuple[List[str], List[str]]:
+    "获取章节标题（调试用）"
+    # note: data 是被修改过的，添加了 bId（书籍 Id）值用于构造 VIP 章节的 url
+    volumes = data["vs"]
+    freev = list(filter(lambda v: v["vS"] == 0, volumes))
+    vipv = list(filter(lambda v: v["vS"] == 1, volumes))
+    freet = [c['cN'] for v in freev for c in v['cs']]
+    vipt = (c['cN'] for v in vipv for c in v['cs'])
+    return (freet, vipt)
 
 
 def get_freechapter(session: r.Session, subpath: str) -> BeautifulSoup:

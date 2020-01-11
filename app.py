@@ -11,12 +11,12 @@ def cli():
     parser = ArgumentParser(prog="backupqidian")
     parser.add_argument("bid", help="book ID", type=int)
     parser.add_argument(
-        "--cookiefile", help="指定 cookies.txt", default="cookies.txt")
-    parser.add_argument("-o", "--output", help="保存到文件", default="text.txt")
+        "--cookiefile", help="指定 cookies.txt 路径", default="cookies.txt")
+    parser.add_argument("-o", "--output", help="指定保存文件路径", default="text.txt")
     parser.add_argument(
         "--vip", help="是否抓取 VIP 章节：默认 False", action="store_true")
-    parser.add_argument("--range", help="页面范围，从 1 开始")
-    parser.add_argument("--dry-run", help="看看会下载哪些章节", action="store_true")
+    parser.add_argument("--range", help="章节范围，从 1 开始")
+    parser.add_argument("--dry-run", help="看看会下载哪些章节，仅预览，不实际下载", action="store_true")
     args = parser.parse_args()
 
     session = get_session(args.cookiefile)
